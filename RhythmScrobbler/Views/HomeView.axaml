@@ -12,14 +12,32 @@
     </Design.DataContext>
 
 
-    <!-- <StackPanel> -->
-        <ListBox ItemsSource="{Binding Games}" 
-                MinWidth="250">
+    <Grid RowDefinitions="50, *">
+        <StackPanel Grid.Row="0" Background="Transparent">
+            <Button Command="{Binding ToggleWatchersCommand}" >
+                <PathIcon Classes.enabled="{Binding IsEnabled}" Width="24" Height="24" Data="{StaticResource PowerRegular}">
+                    <PathIcon.Styles>
+                        <Style Selector="PathIcon">
+                            <Setter Property="Foreground" Value="Red" />
+                        </Style>
+                        <Style Selector="PathIcon.enabled">
+                            <Setter Property="Foreground" Value="Green" />
+                        </Style>
+                        </PathIcon.Styles>
+                </PathIcon>
+            </Button>
+        </StackPanel>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Games}"
+                 MinWidth="250">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
+            <!-- <ListBox.DataTemplates> -->
+            <!--     <DataTemplate DataType="vm:NewGameViewModel"> -->
+            <!--     </DataTemplate> -->
+            <!-- </ListBox.DataTemplates> -->
         </ListBox>
-    <!-- </StackPanel> -->
+    </Grid>
 </UserControl>

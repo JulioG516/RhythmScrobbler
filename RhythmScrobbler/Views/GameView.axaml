@@ -18,8 +18,31 @@
                 <Panel Height="200">
                     <PathIcon Height="75" Width="75" Data="{StaticResource GamesRegular}"></PathIcon>
                 </Panel>
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" CornerRadius="10">
-                    <PathIcon Height="25" Width="25" Data="{StaticResource PowerRegular}"></PathIcon>
+                <Button VerticalAlignment="Bottom"
+                        HorizontalAlignment="Left" 
+                        CornerRadius="10"
+                        Command="{Binding ToggleWatcher}"
+                        Classes.btn="{Binding IsWatcherToggled}">
+                    <Button.Styles>
+                        <Style Selector="Button.btn">
+                            <Setter Property="Background" Value="Bisque"></Setter>
+                        </Style>
+                    </Button.Styles>
+                    <PathIcon Height="25"
+                              Width="25" 
+                              Data="{StaticResource PowerRegular}"
+                              Classes.toggled="{Binding IsWatcherToggled}"
+                    >
+                        <PathIcon.Styles>
+                            <Style Selector="PathIcon">
+                                <Setter Property="Foreground" Value="Red"></Setter>
+                            </Style>
+                            <Style Selector="PathIcon.toggled">
+                                <Setter Property="Foreground" Value="LimeGreen"></Setter>
+                            </Style>
+                            
+                        </PathIcon.Styles>
+                    </PathIcon>
                 </Button>
                 <Button VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"

@@ -40,4 +40,5 @@ public class MainWindowViewModel : ReactiveObject, IScreen
 
         Router.Navigate.Execute(ViewModelCollection[0]);
     }
+    
 }
