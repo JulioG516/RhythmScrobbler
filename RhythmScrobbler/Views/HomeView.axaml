@@ -5,10 +5,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="RhythmScrobbler.Views.FirstView"
              xmlns:vm="using:RhythmScrobbler.ViewModels"
-             x:DataType="vm:FirstViewModel">
+             x:DataType="vm:HomeViewModel">
 
     <Design.DataContext>
-        <vm:FirstViewModel />
+        <vm:HomeViewModel />
     </Design.DataContext>
 
 

@@ -7,9 +7,9 @@ using RhythmScrobbler.ViewModels;
 
 namespace RhythmScrobbler.Views;
 
-public partial class FirstView : ReactiveUserControl<FirstViewModel>
+public partial class HomeView : ReactiveUserControl<HomeViewModel>
 {
-    public FirstView()
+    public HomeView()
     {
         this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);
