@@ -1,0 +1,73 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+        x:Class="RhythmScrobbler.Views.MainWindow"
+        xmlns:vm="using:RhythmScrobbler.ViewModels"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        xmlns:rxui="http://reactiveui.net"
+        xmlns:rhythmScrobbler="clr-namespace:RhythmScrobbler"
+        xmlns:local="clr-namespace:RhythmScrobbler.Views"
+        ExtendClientAreaToDecorationsHint="True"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        MinWidth="515" MinHeight="488"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+        Title="RhythmScrobbler">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+
+    <Panel >
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Grid Margin="0, 25,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="125" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <rxui:RoutedViewHost Grid.Column="1"
+                                 Router="{Binding Router}"
+                                 
+                                 >
+                <!-- Tela Mudavel aqui -->
+                <rxui:RoutedViewHost.DefaultContent>
+                    <TextBlock Text="Default Content"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </rxui:RoutedViewHost.DefaultContent>
+                <rxui:RoutedViewHost.ViewLocator>
+                    <!-- App View Locator -->
+                    <rhythmScrobbler:SimpleViewLocator />
+                </rxui:RoutedViewHost.ViewLocator>
+            </rxui:RoutedViewHost>
+            <StackPanel Grid.Column="0" Margin="5, 10, 0, 0" >
+                <Button HorizontalAlignment="Center"
+                        Command="{Binding NavigateHome}">
+                    Home
+                </Button>
+                <Separator />
+                <Button HorizontalAlignment="Center"
+                        Command="{Binding NavigateLog}">
+                    My Scrobbles
+                </Button>
+            </StackPanel>
+
+        </Grid>
+    </Panel>
+
+
+</Window>
