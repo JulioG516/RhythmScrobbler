@@ -6,7 +6,7 @@ using RhythmScrobbler.Views;
 
 namespace RhythmScrobbler.ViewModels;
 
-public class FirstViewModel : ReactiveObject, IRoutableViewModel
+public class HomeViewModel : ReactiveObject, IRoutableViewModel
 {
     // Reference to IScreen that owns the routable view model.
     public IScreen HostScreen { get; }
@@ -20,11 +20,11 @@ public class FirstViewModel : ReactiveObject, IRoutableViewModel
         new GameViewModel(new Game(){Name = "YARG"}),
     };
     
-    public FirstViewModel()
+    public HomeViewModel()
     {
     }
 
-    public FirstViewModel(IScreen screen)
+    public HomeViewModel(IScreen screen)
     {
         HostScreen = screen;
     }

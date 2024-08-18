@@ -10,9 +10,9 @@ public class SimpleViewLocator : IViewLocator
 {
     public IViewFor? ResolveView<T>(T? viewModel, string? contract = null)
     {
-        if (viewModel is FirstViewModel firstViewModel)
+        if (viewModel is HomeViewModel firstViewModel)
         {
-            return new FirstView { DataContext = firstViewModel };
+            return new HomeView { DataContext = firstViewModel };
         }
         else if (viewModel is SecondViewModel secondViewModel)
         {

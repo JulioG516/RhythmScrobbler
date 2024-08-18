@@ -24,7 +24,7 @@ public class MainWindowViewModel : ReactiveObject, IScreen
     {
         ViewModelCollection = new ObservableCollection<IRoutableViewModel>
         {
-            new FirstViewModel(this),
+            new HomeViewModel(this),
             //new SecondViewModel(this)
             // Add other view models here
         };
