@@ -62,7 +62,7 @@
                 <Separator />
                 <Button HorizontalAlignment="Center"
                         Command="{Binding NavigateLog}">
-                    My Scrobbles
+                    Log
                 </Button>
             </StackPanel>
 

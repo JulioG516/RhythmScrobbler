@@ -3,5 +3,7 @@
 public enum GameType
 {
     CloneHero,
-    YARG
+    YARG,
+    Game1,
+    Game2
 }

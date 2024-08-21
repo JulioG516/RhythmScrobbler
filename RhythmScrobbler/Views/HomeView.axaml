@@ -34,10 +34,6 @@
                     <WrapPanel />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            <!-- <ListBox.DataTemplates> -->
-            <!--     <DataTemplate DataType="vm:NewGameViewModel"> -->
-            <!--     </DataTemplate> -->
-            <!-- </ListBox.DataTemplates> -->
         </ListBox>
     </Grid>
 </UserControl>

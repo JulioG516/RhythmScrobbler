@@ -22,25 +22,12 @@ public class GameViewModel : ViewModelBase
         Name = game.Name;
         Path = game.Path;
         Type = game.Type;
-
-        if (_type == GameType.CloneHero)
-        {
-            Debug.WriteLine("instanciei o clone hero.");
-        }
-
+        
         SelectPath = ReactiveCommand.Create(SelectAnPath);
         ToggleWatcher = ReactiveCommand.Create(ToggleEnabled);
 
-        // _fileDialog = Locator.Current.GetService<FileDialogService>();
-
-        this.WhenAnyValue(x => x.Path);
-        this.WhenAnyValue(x => x.IsWatcherToggled);
-
-
     }
-
-
-    // private FileDialogService _fileDialog;
+    
     public ReactiveCommand<Unit, Unit> SelectPath { get; }
 
     public ReactiveCommand<Unit, Unit> ToggleWatcher { get; }
@@ -55,7 +42,7 @@ public class GameViewModel : ViewModelBase
     private void ToggleEnabled()
     {
         Debug.WriteLine("Watcher toggle click");
-        _isWatcherToggled = !_isWatcherToggled;
+        IsWatcherToggled = !IsWatcherToggled;
     }
 
     private string _name;
