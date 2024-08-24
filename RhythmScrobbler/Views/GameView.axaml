@@ -23,11 +23,6 @@
                         CornerRadius="10"
                         Command="{Binding ToggleWatcher}"
                         Classes.btn="{Binding IsWatcherToggled}">
-                    <Button.Styles>
-                        <Style Selector="Button.btn">
-                            <Setter Property="Background" Value="Bisque"></Setter>
-                        </Style>
-                    </Button.Styles>
                     <PathIcon Height="25"
                               Width="25" 
                               Data="{StaticResource PowerRegular}"

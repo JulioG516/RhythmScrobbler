@@ -1,9 +1,7 @@
 ﻿namespace RhythmScrobbler.Models;
 
-public enum GameType
+public enum EnumGameType
 {
     CloneHero,
     YARG,
-    Game1,
-    Game2
 }

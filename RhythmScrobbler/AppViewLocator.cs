@@ -1,19 +1,23 @@
 ﻿using System;
+using Avalonia.Controls;
 using ReactiveUI;
 using RhythmScrobbler.ViewModels;
 using RhythmScrobbler.Views;
 
 namespace RhythmScrobbler;
 
-public class AppViewLocator : ReactiveUI.IViewLocator
+public static class AppViewLocator 
 {
-    public IViewFor? ResolveView<T>(T? viewModel, string? contract = null) => viewModel switch
+    /// <summary>
+    /// Finds a view from a given ViewModel
+    /// </summary>
+    /// <param name="vm">The ViewModel representing a View</param>
+    /// <returns>The View that matches the ViewModel. Null is no match found</returns>
+    public static Window ResolveViewFromViewModel<T>(T vm) where T : ViewModelBase
     {
-        HomeViewModel context => new HomeView { DataContext = context },
-        _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
-        
-
-    };
-    
+        var name = vm.GetType().AssemblyQualifiedName!.Replace("ViewModel", "View");
+        var type = Type.GetType(name);
+        return type != null ? (Window)Activator.CreateInstance(type)! : null;
+    }
  
 }

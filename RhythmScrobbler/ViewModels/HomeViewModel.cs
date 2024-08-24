@@ -46,10 +46,10 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
                 {
                     this.IsEnabled = true;
                 }
-                else
-                {
-                    this.IsEnabled = false;
-                }
+                // else
+                // {
+                //     this.IsEnabled = false;
+                // }
             });
         
         // // Subscribe to changes
@@ -73,8 +73,8 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
 
     private ObservableCollection<GameViewModel> _games = new()
     {
-        new GameViewModel(new Game() { Name = "Clone Hero", Type = GameType.CloneHero }),
-        new GameViewModel(new Game() { Name = "Yarg", Type = GameType.YARG }),
+        new GameViewModel(new Game() { Name = "Clone Hero", Type = EnumGameType.CloneHero }),
+        new GameViewModel(new Game() { Name = "Yarg", Type = EnumGameType.YARG }),
     };
 
     public ObservableCollection<GameViewModel> Games

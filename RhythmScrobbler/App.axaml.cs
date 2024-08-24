@@ -15,7 +15,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
         
         // Singleton
-        Locator.CurrentMutable.RegisterConstant(new FileDialogService(), typeof(FileDialogService));
+        // Locator.CurrentMutable.RegisterConstant(new FileDialogService(), typeof(FileDialogService));
     }
 
     public override void OnFrameworkInitializationCompleted()

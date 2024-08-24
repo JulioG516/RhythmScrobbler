@@ -19,7 +19,7 @@ public class NewGameViewModel : ViewModelBase
         _path = game.Path;
         _type = game.Type;
 
-        if (_type == GameType.CloneHero)
+        if (_type == EnumGameType.CloneHero)
         {
             Debug.WriteLine("instanciei o clone hero.");
         }
@@ -27,11 +27,9 @@ public class NewGameViewModel : ViewModelBase
         SelectPath = ReactiveCommand.Create(SelectAnPath);
         ToggleWatcher = ReactiveCommand.Create(ToggleEnabled);
 
-        _fileDialog = Locator.Current.GetService<FileDialogService>();
     }
 
 
-    private FileDialogService _fileDialog;
     public ReactiveCommand<Unit, Unit> SelectPath { get; }
 
     public ReactiveCommand<Unit, Unit> ToggleWatcher { get; }
@@ -64,9 +62,9 @@ public class NewGameViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _path, value);
     }
 
-    private GameType _type;
+    private EnumGameType _type;
 
-    public GameType Type
+    public EnumGameType Type
     {
         get => _type;
         set => this.RaiseAndSetIfChanged(ref _type, value);
