@@ -1,0 +1,6 @@
+﻿{
+  "LastFM": {
+    "ApiKey" : "YourApiKey",
+    "SharedSecret" : "YourApiSecret"
+  }
+}

@@ -6,6 +6,7 @@ namespace RhythmScrobbler.Helpers;
 
 public static class Interactions
 {
+    //TODO: Trocar de Errros para ShowMessage, com Titulo, Mensagem etc.
     public static readonly Interaction<Exception, Unit>
         Errors = new Interaction<Exception, Unit>();
 
