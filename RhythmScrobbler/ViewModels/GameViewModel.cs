@@ -3,16 +3,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
 using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
 using RhythmScrobbler.Services;
+using Splat;
 
 namespace RhythmScrobbler.ViewModels;
 
-//TODO: Make the SelectPath command open a dialog
-//TODO: Make the switch command and make the logic to watch the song
 public class GameViewModel : ViewModelBase
 {
     public GameViewModel()
@@ -22,11 +22,13 @@ public class GameViewModel : ViewModelBase
     public GameViewModel(Game game)
     {
         Name = game.Name;
-        Path = "";//game.Path;
+        Path = ""; //game.Path;
         Type = game.Type;
 
+        _lastFm = Locator.Current.GetService<LastFmService>();
+
         CurrentScrobble = new Scrobble();
-        
+
         // Observable on Path => changed != null or "" create new Service
         SelectPath = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -41,35 +43,32 @@ public class GameViewModel : ViewModelBase
                 _watcherService.ScrobbleChanged += OnScrobbleChanged;
             }
         });
-        ToggleWatcher = ReactiveCommand.Create(ToggleEnabled);
-
-        ScrobbleCommand = ReactiveCommand.Create(() =>
-        {
-            Debug.WriteLine($"Scrobble Command: {Path}");
-        });
+        ToggleWatcher = ReactiveCommand.CreateFromTask(ToggleEnabled);
 
 
-        // this.WhenAnyValue(x => x.CurrentScrobble)
-        //     .Where(x => !x.Equals(CurrentScrobble))
-        //     .ToProperty(this, x => x.CurrentScrobble);
-        //
-        //  this.WhenAnyValue(x => x.CurrentScrobble)
-        //      .DistinctUntilChanged() // Filters out consecutive duplicate values
-        //      .ToProperty(this, x => x.CurrentScrobble);
-        // 
-        
         // TODO: Metodo para LAST.Fm
         this.WhenAnyValue(x => x.CurrentScrobble)
-            .Subscribe(newValue => Debug.WriteLine($"Scrobble changed to: {newValue}"));
-
+            .Where(x => !string.IsNullOrEmpty(x.SongName)
+                        && !string.IsNullOrEmpty(x.Album)
+                        && !string.IsNullOrEmpty(x.Artist)
+                        && IsWatcherToggled
+            )
+            .Distinct()
+            .Throttle(TimeSpan.FromSeconds(5))
+            .Subscribe(OnNext);
     }
 
+    private async void OnNext(Scrobble newValue)
+    {
+        await _lastFm.ScrobbleTrack(newValue.SongName, newValue.Artist, newValue.Album);
+        Debug.WriteLine($"Scrobble changed to: {newValue}");
+    }
+
+    private LastFmService _lastFm;
     private FileWatcherService _watcherService;
     public ICommand SelectPath { get; }
 
     public ReactiveCommand<Unit, Unit> ToggleWatcher { get; }
-    
-    public ICommand ScrobbleCommand { get; }
 
     private void OnChanged(object sender, FileSystemEventArgs e)
     {
@@ -81,14 +80,14 @@ public class GameViewModel : ViewModelBase
         // Debug.WriteLine(e.Scrobble);
         CurrentScrobble = e.Scrobble;
     }
-    
-    private void ToggleEnabled()
+
+    private async Task ToggleEnabled()
     {
         if (!string.IsNullOrEmpty(Path))
         {
-            Debug.WriteLine("Tem path.");
             IsWatcherToggled = !IsWatcherToggled;
         }
+        // await _lastFm.ScrobbleTrack("O Mundo é um Moinho", "Cartola", "Raízes do Samba");
     }
 
     private string _name;
@@ -106,7 +105,7 @@ public class GameViewModel : ViewModelBase
         get => _path;
         set => this.RaiseAndSetIfChanged(ref _path, value);
     }
-    
+
     private EnumGameType _type;
 
     public EnumGameType Type
@@ -137,5 +136,4 @@ public class GameViewModel : ViewModelBase
             }
         }
     }
-
 }

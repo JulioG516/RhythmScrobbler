@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reactive.Linq;
 using System.Threading;
+using ReactiveUI;
 using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
 
@@ -11,6 +13,8 @@ public class FileWatcherService : IDisposable
 {
     private readonly FileSystemWatcher _watcher;
     private string _path;
+
+    private string _Scrobble;
 
     public event FileSystemEventHandler FileChanged;
     public event EventHandler<ScrobbleChangedEventArgs> ScrobbleChanged;
@@ -22,6 +26,7 @@ public class FileWatcherService : IDisposable
     public FileWatcherService(string directoryPath, EnumGameType gameType)
     {
         _path = directoryPath;
+        _Scrobble = "";
         var fileName = gameType switch
         {
             EnumGameType.CloneHero => Constants.CloneHeroFileName,
@@ -59,11 +64,11 @@ public class FileWatcherService : IDisposable
         Debug.WriteLine(e);
         if (e.ChangeType != WatcherChangeTypes.Changed)
             return;
-        
+
         // Debug.WriteLine($"Changed: {e.FullPath}");
-        
+
         Thread.SpinWait(15);
-        
+
         var x = File.ReadAllLines(e.FullPath);
         if (x.Length > 0)
         {
@@ -72,7 +77,8 @@ public class FileWatcherService : IDisposable
             // {
             //     Debug.WriteLine(se);
             // }
-        
+
+            
             this.ScrobbleChanged?.Invoke(sender,
                 new ScrobbleChangedEventArgs()
                 {

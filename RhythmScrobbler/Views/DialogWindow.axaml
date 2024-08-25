@@ -1,0 +1,48 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        x:Name="MDialogWindow"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="574" d:DesignHeight="368"
+        Width="574" Height="368"
+        x:Class="RhythmScrobbler.Views.DialogWindow"
+        x:DataType="vm:DialogWindowViewModel"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
+        xmlns:vm="using:RhythmScrobbler.ViewModels"
+        Title="DialogWindow">
+
+    <Design.DataContext>
+        <vm:DialogWindowViewModel />
+    </Design.DataContext>
+
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Grid RowDefinitions="30, *, 30">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock>Warning!</TextBlock>
+            </StackPanel>
+            
+            
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="{Binding Message}" />
+            </StackPanel>
+
+            <Button Grid.Row="2" HorizontalAlignment="Right"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding ElementName=MDialogWindow}">
+                OK
+            </Button>
+        </Grid>
+    </Panel>
+</Window>

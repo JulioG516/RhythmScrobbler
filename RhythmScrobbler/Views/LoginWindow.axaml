@@ -1,0 +1,63 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        x:Name="MLoginWindow"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
+        Width="300" Height="250"
+        x:Class="RhythmScrobbler.Views.LoginWindow"
+        Title="LoginWindow"
+        x:DataType="vm:LoginWindowViewModel"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
+        xmlns:vm="using:RhythmScrobbler.ViewModels">
+
+    <Design.DataContext>
+        <vm:LoginWindowViewModel />
+    </Design.DataContext>
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Grid RowDefinitions="30, *">
+            <Button Grid.Row="0"
+                    HorizontalAlignment="Right"
+                    Command="{Binding CloseCommand}">
+                <PathIcon Data="{StaticResource CloseRegular}">
+                
+                </PathIcon>
+            </Button>
+            <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Center">
+
+                <TextBlock HorizontalAlignment="Center" Margin="0, 0, 0,15">Login in Last.FM</TextBlock>
+
+                <TextBox Watermark="Username"
+                         Width="200"
+                         Text="{Binding Username}" />
+
+                <TextBox Watermark="Password"
+                         Margin="0, 15, 0,0"
+                         Width="200"
+                         Text="{Binding  Password}" />
+
+                <Button Margin="0, 15, 0,0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Command="{Binding LoginCommand}">
+                    <!-- CommandParameter="{Binding ElementName=MLoginWindow}" -->
+                    Login
+                </Button>
+            </StackPanel>
+        </Grid>
+
+
+    </Panel>
+</Window>

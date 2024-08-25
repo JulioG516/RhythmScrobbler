@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -26,7 +27,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 {
                     Debug.WriteLine("Desktop");
-                    
+
                     var options = new FolderPickerOpenOptions()
                     {
                         AllowMultiple = false,
@@ -38,5 +39,27 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                     interaction.SetOutput(folder.Any() ? folder.First().Path.LocalPath : null);
                 }
             });
+
+        Interactions.Errors.RegisterHandler(async interaction =>
+        {
+            var dialog = new DialogWindow();
+
+            dialog.DataContext = new DialogWindowViewModel() { Message = interaction.Input.Message };
+            Debug.WriteLine($"Erro Message: {interaction.Input.Message}");
+
+            await dialog.ShowDialog(this);
+            interaction.SetOutput(Unit.Default);
+        });
+
+        Interactions.LoginDialog.RegisterHandler(async interaction =>
+        {
+            var vm = new LoginWindowViewModel();
+            var dialog = new LoginWindow();
+            dialog.DataContext = vm;
+
+            var result = await dialog.ShowDialog<bool>(this);
+            interaction.SetOutput(result);
+            
+        });
     }
 }

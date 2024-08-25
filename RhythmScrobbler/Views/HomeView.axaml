@@ -13,18 +13,14 @@
 
 
     <Grid RowDefinitions="50, *">
-        <StackPanel Grid.Row="0" Background="Transparent">
-            <Button Command="{Binding ToggleWatchersCommand}" >
-                <PathIcon Classes.enabled="{Binding IsEnabled}" Width="24" Height="24" Data="{StaticResource PowerRegular}">
-                    <PathIcon.Styles>
-                        <Style Selector="PathIcon">
-                            <Setter Property="Foreground" Value="Red" />
-                        </Style>
-                        <Style Selector="PathIcon.enabled">
-                            <Setter Property="Foreground" Value="Green" />
-                        </Style>
-                        </PathIcon.Styles>
-                </PathIcon>
+        <StackPanel Grid.Row="0" Background="Transparent" Orientation="Horizontal">
+            <Button Height="37" HorizontalAlignment="Right" Command="{Binding LoginCommand}">
+                <StackPanel Orientation="Horizontal" >
+                    <PathIcon Data="{StaticResource PersonUnknownRegular}" Margin="10,0, 10, 0">
+                        
+                    </PathIcon>
+                    <TextBlock VerticalAlignment="Center">Login</TextBlock>
+                </StackPanel>
             </Button>
         </StackPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Games}"

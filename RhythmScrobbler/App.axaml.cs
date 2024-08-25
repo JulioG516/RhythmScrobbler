@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Hqub.Lastfm;
+using Microsoft.Extensions.Configuration;
 using RhythmScrobbler.Services;
 using RhythmScrobbler.ViewModels;
 using RhythmScrobbler.Views;
@@ -13,9 +15,24 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        
+
         // Singleton
         // Locator.CurrentMutable.RegisterConstant(new FileDialogService(), typeof(FileDialogService));
+
+        // Config from AppSettings.json
+        var builder = new ConfigurationBuilder()
+            .SetBasePath(System.AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json",
+                optional: true,
+                reloadOnChange: true);
+
+        var config = builder.Build();
+
+        var lastFm = config.GetSection("LastFM");
+
+        var lastFmHttpClient = new LastfmClient(lastFm["ApiKey"], lastFm["SharedSecret"]);
+        Locator.CurrentMutable.RegisterConstant(new LastFmService(lastFmHttpClient), typeof(LastFmService));
+        
     }
 
     public override void OnFrameworkInitializationCompleted()

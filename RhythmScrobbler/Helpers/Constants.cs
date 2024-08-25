@@ -2,5 +2,5 @@
 
 public static class Constants
 {
-    public static string CloneHeroFileName = "currentsong.txt";
+    public const string CloneHeroFileName = "currentsong.txt";
 }

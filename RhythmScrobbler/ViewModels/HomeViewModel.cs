@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using DynamicData;
-using DynamicData.Binding;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using ReactiveUI;
+using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
-using RhythmScrobbler.Views;
+using RhythmScrobbler.Services;
+using Splat;
 
 namespace RhythmScrobbler.ViewModels;
 
@@ -23,53 +22,21 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
     public HomeViewModel(IScreen screen)
     {
         HostScreen = screen;
+        _lastFmService = Locator.Current.GetService<LastFmService>();
 
+        //TODO: Persistir Paths nos <GameViewModels>, Username e Senha do <LastFMService> 
         ToggleWatchersCommand = ReactiveCommand.Create(ToggleWatcher);
-
-
-        // Convert the collection to an observable change set
-        var changeSet = Games.ToObservableChangeSet(vm => vm);
-
-        // Automatically refresh when the 'Path' property changes
-        var autoRefreshedChangeSet = changeSet.AutoRefresh(x => x.IsWatcherToggled);
-
-        // Subscribe to changes and check if all properties are true or false
-        var collectionChanged = autoRefreshedChangeSet
-            .ToCollection()
-            .Select(x => x)
-            .Subscribe(viewModels =>
-            {
-                bool allTrue = viewModels.All(vm => vm.IsWatcherToggled);
-                Debug.WriteLine(allTrue);
-                
-                if (allTrue)
-                {
-                    this.IsEnabled = true;
-                }
-                // else
-                // {
-                //     this.IsEnabled = false;
-                // }
-            });
-        
-        // // Subscribe to changes
-        // autoRefreshedChangeSet.Subscribe(change =>
-        // {
-        //     // Handle changes (e.g., print to debug)
-        //     foreach (var itemChange in change)
-        //     {
-        //         var viewModel = itemChange.Current;
-        //         Debug.WriteLine($"Path changed in ViewModel: {viewModel.Path}");
-        //     }
-        // });
+        LoginCommand = ReactiveCommand.CreateFromTask(OpenLoginAsync);
     }
-
 
     // Reference to IScreen that owns the routable view model.
     public IScreen HostScreen { get; }
 
+    private LastFmService _lastFmService;
+
     // Unique identifier for the routable view model.
     public string? UrlPathSegment { get; } = Guid.NewGuid().ToString().Substring(0, 5);
+
 
     private ObservableCollection<GameViewModel> _games = new()
     {
@@ -91,23 +58,27 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
         set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
     }
 
+    private bool _isUserLogged;
+
+    public bool IsUserLogged
+    {
+        get => _isUserLogged;
+        set => this.RaiseAndSetIfChanged(ref _isUserLogged, value);
+    }
 
     public ReactiveCommand<Unit, Unit> ToggleWatchersCommand { get; }
 
     private void ToggleWatcher()
     {
-        IsEnabled = !IsEnabled;
-
-     
-        // foreach (var gameViewModel in Games)
-        // {
-        //     gameViewModel.IsWatcherToggled = IsEnabled;
-        // }
+        // IsEnabled = !IsEnabled;
+        _lastFmService.Username = "Meu Mundo";
     }
 
-    // public ObservableCollection<GameViewModel> Games { get; } = new ObservableCollection<GameViewModel>
-    // {
-    //     new GameViewModel(new Game() { Name = "Clone Hero", Type = GameType.CloneHero }),
-    //     new GameViewModel(new Game() { Name = "YARG", Type = GameType.YARG }),
-    // };
+    public ICommand LoginCommand { get; }
+
+    private async Task OpenLoginAsync()
+    {
+        IsUserLogged = await Interactions.LoginDialog.Handle(Unit.Default);
+        Debug.WriteLine($"Result do login: {IsUserLogged}");
+    }
 }
