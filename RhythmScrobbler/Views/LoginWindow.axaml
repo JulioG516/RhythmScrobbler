@@ -12,6 +12,7 @@
         WindowStartupLocation="CenterOwner"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaToDecorationsHint="True"
+        xmlns:custom="clr-namespace:Avalonia.Xaml.Interactions.Custom"
         xmlns:vm="using:RhythmScrobbler.ViewModels">
 
     <Design.DataContext>
@@ -41,7 +42,11 @@
 
                 <TextBox Watermark="Username"
                          Width="200"
-                         Text="{Binding Username}" />
+                         Text="{Binding Username}">
+                    <Interaction.Behaviors>
+                        <FocusOnAttachedToVisualTreeBehavior/>
+                    </Interaction.Behaviors>
+                </TextBox>
 
                 <TextBox Watermark="Password"
                          Margin="0, 15, 0,0"

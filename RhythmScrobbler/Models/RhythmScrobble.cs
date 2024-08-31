@@ -5,19 +5,19 @@ namespace RhythmScrobbler.Models;
 
 public class RhythmScrobble
 {
+    public string Guid { get; set; } = System.Guid.NewGuid().ToString().Substring(0, 10);
     public string Artist { get; set; }
     public string Track { get; set; }
     public string Album { get; set; }
 
     public DateTime Date { get; set; }
-    
+
     public bool Accepted { get; set; }
     public string ImageUrl { get; set; }
     public string AdditionalInfo { get; set; }
 
     public RhythmScrobble()
     {
-        
     }
 
     public RhythmScrobble(Scrobble scrobble)
@@ -27,7 +27,7 @@ public class RhythmScrobble
         Album = scrobble.Album;
         Date = scrobble.Date;
     }
-    
+
     public override string ToString()
     {
         return $"Artist: {Artist}\nSong: {Track}\nAlbum: {Album}";

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Hqub.Lastfm.Entities;
 using ReactiveUI;
 using RhythmScrobbler.Models;
 using RhythmScrobbler.Services;
@@ -19,8 +19,18 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
 
     private DbService _dbService;
     private LastFmService _lastFmService;
+
+
+    private ObservableCollection<RhythmScrobbleViewModel> _ScrobblesCollection;
     
-    public ObservableCollection<RhythmScrobble> ScrobblesCollection { get; }= new ObservableCollection<RhythmScrobble>();
+    public ObservableCollection<RhythmScrobbleViewModel> ScrobblesCollection
+    {
+        get => _ScrobblesCollection;
+        set => this.RaiseAndSetIfChanged(ref _ScrobblesCollection, value);
+    }
+
+    
+    // public ObservableCollection<RhythmScrobbleViewModel> ScrobblesCollection { get; set; }    
     
     public LogViewModel()
     {
@@ -32,30 +42,65 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
         _dbService = Locator.Current.GetService<DbService>()!;
         _lastFmService = Locator.Current.GetService<LastFmService>()!;
         
-        TestCommand = ReactiveCommand.Create(TestDb);
-
-        ScrobblesCollection = new ObservableCollection<RhythmScrobble>(_dbService.GetScrobbles());
+        DeleteAllCommand = ReactiveCommand.Create(DeleteAll);
+        ReloadCommand = ReactiveCommand.Create(Reload);
+        
+        var scrobbles = _dbService.GetScrobbles();
+        
+        ScrobblesCollection = new ObservableCollection<RhythmScrobbleViewModel>(
+            scrobbles.Select(s => new RhythmScrobbleViewModel(s))
+        );
         
         // Fetch additional info for scrobbles
-        FetchAdditionalInfoForScrobblesAsync().ConfigureAwait(false);
+        FetchAdditionalInfoForNewScrobblesAsync(scrobbles).ConfigureAwait(false);
+        // Reload();
+    }
+
+    public ICommand ReloadCommand { get; }
+    
+    private void Reload()
+    {
+        var scrobbles = _dbService.GetScrobbles();
+        var newScrobbles = scrobbles.Where(s => !ScrobblesCollection.Any(existing => existing.Id == s.Guid)).ToList();
+
+        foreach (var scrobble in newScrobbles)
+        {
+            ScrobblesCollection.Add(new RhythmScrobbleViewModel(scrobble));
+        }
+
+        // Fetch additional info for new scrobbles
+        FetchAdditionalInfoForNewScrobblesAsync(newScrobbles).ConfigureAwait(false);
     }
     
+    private async Task FetchAdditionalInfoForNewScrobblesAsync(List<RhythmScrobble> newScrobbles)
+    {
+        var tasks = newScrobbles.Select(async scrobble =>
+        {
+            var trackInfo = await _lastFmService.FetchTrackInfoAsync(scrobble.Artist, scrobble.Track);
+            var viewModel = ScrobblesCollection.First(vm => vm.Id == scrobble.Guid);
+            viewModel.ImageUrl = trackInfo.Album.Images.Find(x => x.Size.Equals("extralarge"))?.Url ?? string.Empty;
+        });
+
+        await Task.WhenAll(tasks);
+    }
     private async Task FetchAdditionalInfoForScrobblesAsync()
     {
         var tasks = ScrobblesCollection.Select(async scrobble =>
         {
             var trackInfo = await _lastFmService.FetchTrackInfoAsync(scrobble.Artist, scrobble.Track);
-            scrobble.ImageUrl = trackInfo.Images.First().Url; // Assuming TrackInfo has an ImageUrl property
+            scrobble.ImageUrl = trackInfo.Album.Images.Find(x => x.Size.Equals("extralarge"))?.Url ?? string.Empty; // Assuming TrackInfo has an ImageUrl property
         });
 
         await Task.WhenAll(tasks);
     }
 
     
-    public ICommand TestCommand { get; }
+    public ICommand DeleteAllCommand { get; }
 
-    private void TestDb()
+    private void DeleteAll()
     {
-        _dbService.Test();;
+        _dbService.DeleteAllScrobbles();;
     }
+    
+    
 }

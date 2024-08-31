@@ -5,55 +5,37 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="RhythmScrobbler.Views.LogView"
              xmlns:vm="using:RhythmScrobbler.ViewModels"
-             xmlns:models="using:RhythmScrobbler.Models"
              x:DataType="vm:LogViewModel">
     <Design.DataContext>
         <vm:LogViewModel />
     </Design.DataContext>
 
-    <StackPanel HorizontalAlignment="Center"
-             >
-        <TextBlock Text="Hello from second view"/>
-        <!-- <TextBlock Text="{Binding UrlPathSegment}" /> -->
-        <Button Command="{Binding  TestCommand}"
-        
-                
-                
-                >Teste DB</Button>
-        
+    <Grid RowDefinitions="50, *">
+        <StackPanel>
+            <TextBlock HorizontalAlignment="Center" Text="Scrobbles History." FontWeight="Bold" />
+            <Button VerticalAlignment="Center" HorizontalAlignment="Right"
+                    Command="{Binding ReloadCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <PathIcon
+                        Data="{StaticResource UpdateRegular}"
+                        Margin="10,0, 10, 0">
 
-        
-        <ListBox ItemsSource="{Binding ScrobblesCollection }">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="models:RhythmScrobble">
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Album: " FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Album}" Margin="5,0,10,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Track: " FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Track}" Margin="5,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Accepted By LastFM: " FontWeight="Bold" Margin="0,0,0,0"/>
-                            <Ellipse Classes.Accepted="{Binding Accepted}"
-                                     Width="12" Height="12">
-                                <Ellipse.Styles>
-                                    <Style Selector="Ellipse">
-                                        <Setter Property="Fill" Value="Red"/>
-                                    </Style>
-                                    <Style Selector="Ellipse.Accepted">
-                                        <Setter Property="Fill" Value="Green"/>
-                                    </Style>
-                                </Ellipse.Styles>
-                            </Ellipse>
-                        </StackPanel>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        
-        
-    </StackPanel>
+                    </PathIcon>
+                    <TextBlock VerticalAlignment="Center">
+                        Reload
+                    </TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ListBox ItemsSource="{Binding ScrobblesCollection}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

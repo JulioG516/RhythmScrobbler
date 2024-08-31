@@ -1,0 +1,48 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RhythmScrobbler.Views.RhythmScrobbleView"
+             x:DataType="vm:RhythmScrobbleViewModel"
+             xmlns:vm="using:RhythmScrobbler.ViewModels">
+
+
+    <StackPanel Width="200">
+        <Border CornerRadius="10" ClipToBounds="True">
+            <Panel Background="#7FFF22DD">
+                <Image Width="200" Stretch="Uniform" Source="{Binding Cover}" />
+                <Panel Height="200" IsVisible="{Binding Cover, Converter={x:Static ObjectConverters.IsNull}}">
+                    <PathIcon Height="75" Width="75" Data="{StaticResource MusicRegular}"></PathIcon>
+                </Panel>
+            </Panel>
+        </Border>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock FontWeight="Bold">Track: </TextBlock>
+            <TextBlock HorizontalAlignment="Center" Text="{Binding Track}"  Margin="5,0,10,0" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock FontWeight="Bold">Album: </TextBlock>
+            <TextBlock HorizontalAlignment="Center" Text="{Binding Album}"  Margin="5,0,10,0" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock FontWeight="Bold">Artist: </TextBlock>
+            <TextBlock HorizontalAlignment="Center" Text="{Binding Artist}"  Margin="5,0,10,0" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Accepted By LastFM: " FontWeight="Bold" Margin="0,0,0,0" />
+            <Ellipse Classes.Accepted="{Binding Accepted}"
+                     Width="12" Height="12">
+                <Ellipse.Styles>
+                    <Style Selector="Ellipse">
+                        <Setter Property="Fill" Value="Red" />
+                    </Style>
+                    <Style Selector="Ellipse.Accepted">
+                        <Setter Property="Fill" Value="Green" />
+                    </Style>
+                </Ellipse.Styles>
+            </Ellipse>
+        </StackPanel>
+
+    </StackPanel>
+</UserControl>
