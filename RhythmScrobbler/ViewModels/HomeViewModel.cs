@@ -22,11 +22,12 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
     public HomeViewModel(IScreen screen)
     {
         HostScreen = screen;
-        _lastFmService = Locator.Current.GetService<LastFmService>();
+        _lastFmService = Locator.Current.GetService<LastFmService>()!;
 
         //TODO: Persistir Paths nos <GameViewModels>, Username e Senha do <LastFMService> 
         ToggleWatchersCommand = ReactiveCommand.Create(ToggleWatcher);
         LoginCommand = ReactiveCommand.CreateFromTask(OpenLoginAsync);
+        LogoutCommand = ReactiveCommand.Create(Logout);
     }
 
     // Reference to IScreen that owns the routable view model.
@@ -75,10 +76,16 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
     }
 
     public ICommand LoginCommand { get; }
-
     private async Task OpenLoginAsync()
     {
         IsUserLogged = await Interactions.LoginDialog.Handle(Unit.Default);
         Debug.WriteLine($"Result do login: {IsUserLogged}");
+    }
+
+    public ICommand LogoutCommand { get; }
+    public void Logout()
+    {
+        _lastFmService.Logout();
+        IsUserLogged = false;   
     }
 }

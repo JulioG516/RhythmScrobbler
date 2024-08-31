@@ -29,10 +29,12 @@ public partial class App : Application
         var config = builder.Build();
 
         var lastFm = config.GetSection("LastFM");
-
-        var lastFmHttpClient = new LastfmClient(lastFm["ApiKey"], lastFm["SharedSecret"]);
-        Locator.CurrentMutable.RegisterConstant(new LastFmService(lastFmHttpClient), typeof(LastFmService));
+        Locator.CurrentMutable.RegisterConstant(lastFm, typeof(IConfigurationSection));
         
+        // var lastfmClient = new LastfmClient(lastFm["ApiKey"], lastFm["SharedSecret"]);
+        //
+        // Locator.CurrentMutable.RegisterConstant(lastfmClient, typeof(LastfmClient));
+        Locator.CurrentMutable.RegisterConstant(new LastFmService(lastFm), typeof(LastFmService));
     }
 
     public override void OnFrameworkInitializationCompleted()

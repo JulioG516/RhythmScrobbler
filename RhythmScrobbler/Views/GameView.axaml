@@ -42,7 +42,7 @@
                 <Button VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
                         CornerRadius="10"
-                        Command="{Binding SelectPath}">
+                        Command="{Binding SelectPathCommand}">
                     <PathIcon Height="25" Width="25" Data="{StaticResource FolderLinkRegular}"></PathIcon>
                 </Button>
             </Panel>

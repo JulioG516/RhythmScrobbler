@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reactive.Linq;
 using System.Threading;
-using ReactiveUI;
 using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
 
@@ -12,11 +10,10 @@ namespace RhythmScrobbler.Services;
 public class FileWatcherService : IDisposable
 {
     private readonly FileSystemWatcher _watcher;
-    private string _path;
 
-    private string _Scrobble;
+    // private string _Scrobble;
 
-    public event FileSystemEventHandler FileChanged;
+    // public event FileSystemEventHandler FileChanged;
     public event EventHandler<ScrobbleChangedEventArgs> ScrobbleChanged;
 
     // private readonly MemoryCache _memCache;
@@ -25,8 +22,7 @@ public class FileWatcherService : IDisposable
 
     public FileWatcherService(string directoryPath, EnumGameType gameType)
     {
-        _path = directoryPath;
-        _Scrobble = "";
+        // _Scrobble = "";
         var fileName = gameType switch
         {
             EnumGameType.CloneHero => Constants.CloneHeroFileName,
@@ -79,7 +75,7 @@ public class FileWatcherService : IDisposable
             // }
 
             
-            this.ScrobbleChanged?.Invoke(sender,
+            ScrobbleChanged?.Invoke(sender,
                 new ScrobbleChangedEventArgs()
                 {
                     Scrobble = new Scrobble()

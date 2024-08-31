@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
@@ -61,5 +60,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             interaction.SetOutput(result);
             
         });
+
+
     }
 }

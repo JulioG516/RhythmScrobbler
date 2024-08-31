@@ -1,10 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reactive;
+﻿using System.Reactive;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Avalonia.Controls;
-using Hqub.Lastfm.Entities;
 using ReactiveUI;
 using RhythmScrobbler.Services;
 using Splat;
@@ -21,10 +16,10 @@ public class LoginWindowViewModel : ViewModelBase
                 !string.IsNullOrEmpty(userName) &&
                 !string.IsNullOrEmpty(password));
 
-        LoginCommand = ReactiveCommand.CreateFromTask<bool>(async () => { return await LoginAsync(); }, canExecute);
+        LoginCommand = ReactiveCommand.CreateFromTask(async () => { return await LoginAsync(); }, canExecute);
         CloseCommand = ReactiveCommand.Create(() => false);
-        
-        _lastFm = Locator.Current.GetService<LastFmService>();
+
+        _lastFm = Locator.Current.GetService<LastFmService>()!;
     }
 
     private LastFmService _lastFm;
@@ -51,19 +46,15 @@ public class LoginWindowViewModel : ViewModelBase
 
     private async Task<bool> LoginAsync()
     {
-        try
-        {
-            await _lastFm.Authenticate(Username, Password);
+        var logged = await _lastFm.Authenticate(Username, Password);
 
+        if (logged)
+        {
             _lastFm.Username = Username;
             _lastFm.Password = Password;
+            return true;
+        }
 
-            return false;
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-            return false;
-        }
+        return false;
     }
 }

@@ -25,25 +25,15 @@ public class GameViewModel : ViewModelBase
         Path = ""; //game.Path;
         Type = game.Type;
 
-        _lastFm = Locator.Current.GetService<LastFmService>();
+        _lastFm = Locator.Current.GetService<LastFmService>()!;
 
         CurrentScrobble = new Scrobble();
 
         // Observable on Path => changed != null or "" create new Service
-        SelectPath = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var folder = await Interactions.GetFolderDialog.Handle(Unit.Default);
-
-            if (!string.IsNullOrEmpty(folder))
-            {
-                Debug.WriteLine(folder);
-                Path = folder;
-                _watcherService = new FileWatcherService(Path, Type);
-                _watcherService.FileChanged += OnChanged;
-                _watcherService.ScrobbleChanged += OnScrobbleChanged;
-            }
-        });
-        ToggleWatcher = ReactiveCommand.CreateFromTask(ToggleEnabled);
+        SelectPathCommand = ReactiveCommand.CreateFromTask(SelectPath);
+        
+        // CreateFromTask
+        ToggleWatcher = ReactiveCommand.Create(ToggleEnabled);
 
 
         // TODO: Metodo para LAST.Fm
@@ -55,19 +45,34 @@ public class GameViewModel : ViewModelBase
             )
             .Distinct()
             .Throttle(TimeSpan.FromSeconds(5))
-            .Subscribe(OnNext);
+            .Subscribe(OnNextSong);
     }
 
-    private async void OnNext(Scrobble newValue)
+    private async void OnNextSong(Scrobble newValue)
     {
         await _lastFm.ScrobbleTrack(newValue.SongName, newValue.Artist, newValue.Album);
-        Debug.WriteLine($"Scrobble changed to: {newValue}");
+        // Debug.WriteLine($"Scrobble changed to: {newValue}");
     }
 
     private LastFmService _lastFm;
     private FileWatcherService _watcherService;
-    public ICommand SelectPath { get; }
-
+    public ICommand SelectPathCommand { get; }
+    private async Task SelectPath()
+    {
+        var folder = await Interactions.GetFolderDialog.Handle(Unit.Default);
+        
+        if (!string.IsNullOrEmpty(folder))
+        {
+            Debug.WriteLine(folder);
+            Path = folder;
+            _watcherService = new FileWatcherService(Path, Type);
+            // _watcherService.FileChanged += OnChanged;
+            _watcherService.ScrobbleChanged += OnScrobbleChanged;
+        }
+    }
+    
+    
+    
     public ReactiveCommand<Unit, Unit> ToggleWatcher { get; }
 
     private void OnChanged(object sender, FileSystemEventArgs e)
@@ -75,19 +80,18 @@ public class GameViewModel : ViewModelBase
         Debug.WriteLine("Recebi no VM.");
     }
 
-    private void OnScrobbleChanged(object sender, ScrobbleChangedEventArgs e)
+    private void OnScrobbleChanged(object? sender, ScrobbleChangedEventArgs e)
     {
         // Debug.WriteLine(e.Scrobble);
         CurrentScrobble = e.Scrobble;
     }
 
-    private async Task ToggleEnabled()
+    private void ToggleEnabled()
     {
         if (!string.IsNullOrEmpty(Path))
         {
             IsWatcherToggled = !IsWatcherToggled;
         }
-        // await _lastFm.ScrobbleTrack("O Mundo é um Moinho", "Cartola", "Raízes do Samba");
     }
 
     private string _name;
@@ -128,12 +132,12 @@ public class GameViewModel : ViewModelBase
     public Scrobble CurrentScrobble
     {
         get => _currentScrobble;
-        set
-        {
-            if (_currentScrobble != value)
-            {
-                this.RaiseAndSetIfChanged(ref _currentScrobble, value);
-            }
-        }
+        set => this.RaiseAndSetIfChanged(ref _currentScrobble, value);
+        // {
+        //     if (_currentScrobble != value)
+        //     {
+        //         this.RaiseAndSetIfChanged(ref _currentScrobble, value);
+        //     }
+        // }
     }
 }

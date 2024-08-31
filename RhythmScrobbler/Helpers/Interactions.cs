@@ -15,4 +15,7 @@ public static class Interactions
 
     public static readonly Interaction<Unit, bool>
         LoginDialog = new Interaction<Unit, bool>();
+
+    public static readonly Interaction<string, bool>
+        IsGameFolderValid = new Interaction<string, bool>();
 }

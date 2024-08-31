@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Hqub.Lastfm;
-using RhythmScrobbler.Helpers;
-using Scrobble = Hqub.Lastfm.Entities.Scrobble;
+using Hqub.Lastfm.Entities;
+using Microsoft.Extensions.Configuration;
+using Splat;
 
 namespace RhythmScrobbler.Services;
 
-public class LastFmService 
+public class LastFmService
 {
-    private readonly LastfmClient _client;
+    private LastfmClient _client { get; set; }
 
     public string Username { get; set; }
     public string Password { get; set; }
@@ -19,21 +19,43 @@ public class LastFmService
     {
     }
 
-    public LastFmService(LastfmClient client)
+    public LastFmService(IConfigurationSection lastFmConfig)
     {
-        _client = client;
+        _client = new LastfmClient(lastFmConfig["ApiKey"], lastFmConfig["SharedSecret"]);
     }
 
-    public async Task Authenticate(string username, string password)
+    public async Task<bool> Authenticate(string username, string password)
     {
         try
         {
             await _client.AuthenticateAsync(username, password);
+            if (_client.Session.Authenticated)
+            {
+                Username = username;
+                Password = password;
+                return true;
+            }
         }
         catch (Exception e)
         {
             Debug.WriteLine($"Auth Error: {e.Message}");
+            return false;
         }
+
+        return false;
+    }
+
+    public void Logout()
+    {
+        if (_client.Session.Authenticated)
+        {
+            var lastFmConfig = Locator.Current.GetService<IConfigurationSection>();
+            _client = new LastfmClient(lastFmConfig!["ApiKey"], lastFmConfig["SharedSecret"]);
+            ;
+        }
+
+        Username = string.Empty;
+        Password = string.Empty;
     }
 
     public async Task LoveTrack(string track, string artist)
@@ -47,22 +69,25 @@ public class LastFmService
 
     public async Task<bool> ScrobbleTrack(string track, string artist, string album)
     {
-        if (!_client.Session.Authenticated)
+        if (_client.Session.Authenticated)
         {
             Debug.WriteLine($"Scrobblei a : {track}");
-            return true;
-            // if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password))
-            // {
-            //     await Authenticate(Username, Password);
-            // }
-            // else
-            // {
-            //     var exception = new ArgumentException("Cannot authenticate, Username or Password is blank.");
-            //
-            //     await Interactions.Errors.Handle(exception);
-            //     return false;
-            // }
-        }
+            var response = await _client.Track.ScrobbleAsync(new Scrobble()
+            {
+                Artist = artist,
+                Track = track,
+                Album = album,
+                Date = DateTime.Now
+            });
+
+            if (response.Accepted > 0)
+            {
+                Debug.WriteLine($"Scrobble aceito.");
+                return true;
+            }
+
+            return false;
+        }   
 
 
         // new Scrobble()

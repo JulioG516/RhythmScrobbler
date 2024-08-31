@@ -14,12 +14,34 @@
 
     <Grid RowDefinitions="50, *">
         <StackPanel Grid.Row="0" Background="Transparent" Orientation="Horizontal">
-            <Button Height="37" HorizontalAlignment="Right" Command="{Binding LoginCommand}">
-                <StackPanel Orientation="Horizontal" >
-                    <PathIcon Data="{StaticResource PersonUnknownRegular}" Margin="10,0, 10, 0">
-                        
+            <Button Height="37" HorizontalAlignment="Right"
+                    Classes.IsLogged="{Binding IsUserLogged}"
+                    
+                    >
+                <Button.Styles>
+                    <Style Selector="Button">
+                       <Setter Property="Command"  Value="{Binding LoginCommand}"/>
+                    </Style>
+                    <Style Selector="Button.IsLogged">
+                        <Setter Property="Command" Value="{Binding LogoutCommand}"/>
+                    </Style>
+                </Button.Styles>
+                
+                <StackPanel Orientation="Horizontal">
+                    <PathIcon
+                        Data="{StaticResource PersonUnknownRegular}"
+                        Margin="10,0, 10, 0"
+                        IsVisible="{Binding !IsUserLogged}">
+
                     </PathIcon>
-                    <TextBlock VerticalAlignment="Center">Login</TextBlock>
+                    <TextBlock VerticalAlignment="Center"
+                               IsVisible="{Binding !IsUserLogged}">
+                        Login
+                    </TextBlock>
+                    <TextBlock VerticalAlignment="Center"
+                               IsVisible="{Binding IsUserLogged}">
+                        Logout
+                    </TextBlock>
                 </StackPanel>
             </Button>
         </StackPanel>
