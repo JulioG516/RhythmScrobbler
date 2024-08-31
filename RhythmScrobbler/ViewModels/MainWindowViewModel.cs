@@ -35,7 +35,7 @@ public class MainWindowViewModel : ReactiveObject, IScreen
         );
 
         NavigateLog = ReactiveCommand.CreateFromObservable(
-            () => Router.Navigate.Execute(new SecondViewModel(this))
+            () => Router.Navigate.Execute(new LogViewModel(this))
         );
 
         Router.Navigate.Execute(ViewModelCollection[0]);

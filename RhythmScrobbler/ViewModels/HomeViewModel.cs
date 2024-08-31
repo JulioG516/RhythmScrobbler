@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
-using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
 using RhythmScrobbler.Services;
 using Splat;
@@ -23,7 +22,8 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
     {
         HostScreen = screen;
         _lastFmService = Locator.Current.GetService<LastFmService>()!;
-
+        
+        
         //TODO: Persistir Paths nos <GameViewModels>, Username e Senha do <LastFMService> 
         ToggleWatchersCommand = ReactiveCommand.Create(ToggleWatcher);
         LoginCommand = ReactiveCommand.CreateFromTask(OpenLoginAsync);
@@ -34,7 +34,7 @@ public class HomeViewModel : ReactiveObject, IRoutableViewModel
     public IScreen HostScreen { get; }
 
     private LastFmService _lastFmService;
-
+    
     // Unique identifier for the routable view model.
     public string? UrlPathSegment { get; } = Guid.NewGuid().ToString().Substring(0, 5);
 

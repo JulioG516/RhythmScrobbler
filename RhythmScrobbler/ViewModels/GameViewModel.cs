@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
-using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
 using RhythmScrobbler.Services;
 using Splat;
@@ -27,7 +26,7 @@ public class GameViewModel : ViewModelBase
 
         _lastFm = Locator.Current.GetService<LastFmService>()!;
 
-        CurrentScrobble = new Scrobble();
+        CurrentRhythmScrobble = new RhythmScrobble();
 
         // Observable on Path => changed != null or "" create new Service
         SelectPathCommand = ReactiveCommand.CreateFromTask(SelectPath);
@@ -37,8 +36,8 @@ public class GameViewModel : ViewModelBase
 
 
         // TODO: Metodo para LAST.Fm
-        this.WhenAnyValue(x => x.CurrentScrobble)
-            .Where(x => !string.IsNullOrEmpty(x.SongName)
+        this.WhenAnyValue(x => x.CurrentRhythmScrobble)
+            .Where(x => !string.IsNullOrEmpty(x.Track)
                         && !string.IsNullOrEmpty(x.Album)
                         && !string.IsNullOrEmpty(x.Artist)
                         && IsWatcherToggled
@@ -48,9 +47,9 @@ public class GameViewModel : ViewModelBase
             .Subscribe(OnNextSong);
     }
 
-    private async void OnNextSong(Scrobble newValue)
+    private async void OnNextSong(RhythmScrobble newValue)
     {
-        await _lastFm.ScrobbleTrack(newValue.SongName, newValue.Artist, newValue.Album);
+        await _lastFm.ScrobbleTrack(newValue.Track, newValue.Artist, newValue.Album);
         // Debug.WriteLine($"Scrobble changed to: {newValue}");
     }
 
@@ -83,7 +82,7 @@ public class GameViewModel : ViewModelBase
     private void OnScrobbleChanged(object? sender, ScrobbleChangedEventArgs e)
     {
         // Debug.WriteLine(e.Scrobble);
-        CurrentScrobble = e.Scrobble;
+        CurrentRhythmScrobble = e.RhythmScrobble;
     }
 
     private void ToggleEnabled()
@@ -127,12 +126,12 @@ public class GameViewModel : ViewModelBase
     }
 
 
-    private Scrobble _currentScrobble;
+    private RhythmScrobble _currentRhythmScrobble;
 
-    public Scrobble CurrentScrobble
+    public RhythmScrobble CurrentRhythmScrobble
     {
-        get => _currentScrobble;
-        set => this.RaiseAndSetIfChanged(ref _currentScrobble, value);
+        get => _currentRhythmScrobble;
+        set => this.RaiseAndSetIfChanged(ref _currentRhythmScrobble, value);
         // {
         //     if (_currentScrobble != value)
         //     {

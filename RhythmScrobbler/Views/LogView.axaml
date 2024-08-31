@@ -1,0 +1,59 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RhythmScrobbler.Views.LogView"
+             xmlns:vm="using:RhythmScrobbler.ViewModels"
+             xmlns:models="using:RhythmScrobbler.Models"
+             x:DataType="vm:LogViewModel">
+    <Design.DataContext>
+        <vm:LogViewModel />
+    </Design.DataContext>
+
+    <StackPanel HorizontalAlignment="Center"
+             >
+        <TextBlock Text="Hello from second view"/>
+        <!-- <TextBlock Text="{Binding UrlPathSegment}" /> -->
+        <Button Command="{Binding  TestCommand}"
+        
+                
+                
+                >Teste DB</Button>
+        
+
+        
+        <ListBox ItemsSource="{Binding ScrobblesCollection }">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="models:RhythmScrobble">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Album: " FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Album}" Margin="5,0,10,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Track: " FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Track}" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Accepted By LastFM: " FontWeight="Bold" Margin="0,0,0,0"/>
+                            <Ellipse Classes.Accepted="{Binding Accepted}"
+                                     Width="12" Height="12">
+                                <Ellipse.Styles>
+                                    <Style Selector="Ellipse">
+                                        <Setter Property="Fill" Value="Red"/>
+                                    </Style>
+                                    <Style Selector="Ellipse.Accepted">
+                                        <Setter Property="Fill" Value="Green"/>
+                                    </Style>
+                                </Ellipse.Styles>
+                            </Ellipse>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        
+    </StackPanel>
+</UserControl>

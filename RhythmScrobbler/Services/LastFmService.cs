@@ -3,33 +3,34 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Hqub.Lastfm;
 using Hqub.Lastfm.Entities;
-using Microsoft.Extensions.Configuration;
+using RhythmScrobbler.Configs;
+using RhythmScrobbler.Models;
 using Splat;
 
 namespace RhythmScrobbler.Services;
 
 public class LastFmService
 {
-    private LastfmClient _client { get; set; }
-
+    private LastfmClient Client { get; set; }
+    private DbService DbService { get; set; }
+    
     public string Username { get; set; }
     public string Password { get; set; }
 
     public LastFmService()
     {
+        var lastFmConfig = Locator.Current.GetService<LastFmConfig>();
+        Client = new LastfmClient(lastFmConfig!.ApiKey, lastFmConfig.SharedSecret);
+        DbService = Locator.Current.GetService<DbService>()!;
     }
 
-    public LastFmService(IConfigurationSection lastFmConfig)
-    {
-        _client = new LastfmClient(lastFmConfig["ApiKey"], lastFmConfig["SharedSecret"]);
-    }
 
     public async Task<bool> Authenticate(string username, string password)
     {
         try
         {
-            await _client.AuthenticateAsync(username, password);
-            if (_client.Session.Authenticated)
+            await Client.AuthenticateAsync(username, password);
+            if (Client.Session.Authenticated)
             {
                 Username = username;
                 Password = password;
@@ -47,11 +48,10 @@ public class LastFmService
 
     public void Logout()
     {
-        if (_client.Session.Authenticated)
+        if (Client.Session.Authenticated)
         {
-            var lastFmConfig = Locator.Current.GetService<IConfigurationSection>();
-            _client = new LastfmClient(lastFmConfig!["ApiKey"], lastFmConfig["SharedSecret"]);
-            ;
+            var lastFmConfig = Locator.Current.GetService<LastFmConfig>();
+            Client = new LastfmClient(lastFmConfig!.ApiKey, lastFmConfig.SharedSecret);
         }
 
         Username = string.Empty;
@@ -60,44 +60,47 @@ public class LastFmService
 
     public async Task LoveTrack(string track, string artist)
     {
-        if (_client.Session.Authenticated)
+        if (Client.Session.Authenticated)
         {
-            var response = await _client.Track.LoveAsync(track, artist);
+            var response = await Client.Track.LoveAsync(track, artist);
             Debug.WriteLine($"Loved track: {response}");
         }
     }
 
+    public async Task<Track> FetchTrackInfoAsync(string artist, string track)
+    {
+        var trackInfo = await Client.Track.GetInfoAsync(track, artist);
+        return trackInfo;
+    }
+    
     public async Task<bool> ScrobbleTrack(string track, string artist, string album)
     {
-        if (_client.Session.Authenticated)
+        if (!Client.Session.Authenticated)
         {
-            Debug.WriteLine($"Scrobblei a : {track}");
-            var response = await _client.Track.ScrobbleAsync(new Scrobble()
-            {
-                Artist = artist,
-                Track = track,
-                Album = album,
-                Date = DateTime.Now
-            });
-
-            if (response.Accepted > 0)
-            {
-                Debug.WriteLine($"Scrobble aceito.");
-                return true;
-            }
-
             return false;
-        }   
+        }
 
+        Debug.WriteLine($"Scrobblei a : {track}");
 
-        // new Scrobble()
-        // {
-        //     Artist = artist,
-        //     Track = track,
-        //     Album = album,
-        //     Date = DateTime.Now
-        // };
+        var scrobble = new Scrobble()
+        {
+            Artist = artist,
+            Track = track,
+            Album = album,
+            Date = DateTime.Now
+        };
 
-        return false;
+        var response = await Client.Track.ScrobbleAsync(scrobble);
+
+        var rhythmScrobble = new RhythmScrobble(scrobble);
+
+        if (response.Accepted > 0)
+        {
+            rhythmScrobble.Accepted = true;
+        }
+        
+        DbService.InsertScrobble(rhythmScrobble);        
+
+        return response.Accepted  > 0;
     }
 }

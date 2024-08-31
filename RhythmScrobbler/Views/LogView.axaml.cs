@@ -7,9 +7,9 @@ using RhythmScrobbler.ViewModels;
 
 namespace RhythmScrobbler.Views;
 
-public partial class SecondView : ReactiveUserControl<SecondViewModel>
+public partial class LogView : ReactiveUserControl<LogViewModel>
 {
-    public SecondView()
+    public LogView()
     {
         this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);

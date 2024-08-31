@@ -7,7 +7,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
-using RhythmScrobbler.Helpers;
+using RhythmScrobbler.Models;
 using RhythmScrobbler.ViewModels;
 
 namespace RhythmScrobbler.Views;

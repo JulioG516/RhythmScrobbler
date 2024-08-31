@@ -14,12 +14,12 @@ public class SimpleViewLocator : IViewLocator
         {
             return new HomeView { DataContext = firstViewModel };
         }
-        else if (viewModel is SecondViewModel secondViewModel)
+        else if (viewModel is LogViewModel secondViewModel)
         {
             // Instantiate SecondView and return it
             // Set the DataContext to secondViewModel
             // Handle other view models similarly
-            return new SecondView { DataContext = secondViewModel };
+            return new LogView { DataContext = secondViewModel };
         }
         // Add more cases for other view models
 

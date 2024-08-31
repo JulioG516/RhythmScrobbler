@@ -21,6 +21,7 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.0" />
         <PackageReference Include="Hqub.Last.fm" Version="2.3.0" />
+        <PackageReference Include="LiteDB" Version="5.0.21" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     </ItemGroup>
 

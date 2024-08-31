@@ -1,8 +1,9 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Hqub.Lastfm;
 using Microsoft.Extensions.Configuration;
+using RhythmScrobbler.Configs;
 using RhythmScrobbler.Services;
 using RhythmScrobbler.ViewModels;
 using RhythmScrobbler.Views;
@@ -29,12 +30,21 @@ public partial class App : Application
         var config = builder.Build();
 
         var lastFm = config.GetSection("LastFM");
-        Locator.CurrentMutable.RegisterConstant(lastFm, typeof(IConfigurationSection));
-        
-        // var lastfmClient = new LastfmClient(lastFm["ApiKey"], lastFm["SharedSecret"]);
-        //
-        // Locator.CurrentMutable.RegisterConstant(lastfmClient, typeof(LastfmClient));
-        Locator.CurrentMutable.RegisterConstant(new LastFmService(lastFm), typeof(LastFmService));
+        var lastFmConfig = new LastFmConfig()
+        {
+            ApiKey = lastFm["ApiKey"]!,
+            SharedSecret = lastFm["SharedSecret"]!
+        };
+
+        var dbConfig = new LiteDbConfig { DatabasePath = AppContext.BaseDirectory + @"\RhythmScrobbler.db" };
+
+
+        Locator.CurrentMutable.RegisterConstant(dbConfig, typeof(LiteDbConfig));
+        Locator.CurrentMutable.RegisterLazySingleton(() => new DbService(),
+            typeof(DbService));
+
+        Locator.CurrentMutable.RegisterConstant(lastFmConfig, typeof(LastFmConfig));
+        Locator.CurrentMutable.RegisterConstant(new LastFmService(), typeof(LastFmService));
     }
 
     public override void OnFrameworkInitializationCompleted()

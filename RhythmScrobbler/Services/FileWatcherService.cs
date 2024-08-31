@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Models;
 
 namespace RhythmScrobbler.Services;
@@ -78,9 +77,9 @@ public class FileWatcherService : IDisposable
             ScrobbleChanged?.Invoke(sender,
                 new ScrobbleChangedEventArgs()
                 {
-                    Scrobble = new Scrobble()
+                    RhythmScrobble = new RhythmScrobble()
                     {
-                        SongName = x[0],
+                        Track = x[0],
                         Artist = x[1],
                         Album = x[2]
                     }

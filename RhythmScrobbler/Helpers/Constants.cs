@@ -1,4 +1,4 @@
-﻿namespace RhythmScrobbler.Helpers;
+﻿namespace RhythmScrobbler.Models;
 
 public static class Constants
 {

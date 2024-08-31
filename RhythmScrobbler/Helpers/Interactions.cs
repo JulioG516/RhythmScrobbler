@@ -2,7 +2,7 @@
 using System.Reactive;
 using ReactiveUI;
 
-namespace RhythmScrobbler.Helpers;
+namespace RhythmScrobbler.Models;
 
 public static class Interactions
 {

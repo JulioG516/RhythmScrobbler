@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace RhythmScrobbler.Helpers;
+namespace RhythmScrobbler.Models;
 
 public class ScrobbleChangedEventArgs : EventArgs
 {
-    public Scrobble Scrobble { get; set; }
+    public RhythmScrobble RhythmScrobble { get; set; }
 }
