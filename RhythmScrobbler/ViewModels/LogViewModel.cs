@@ -44,7 +44,7 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
         _lastFmService = Locator.Current.GetService<LastFmService>()!;
 
         var canExecuteDelete = this.WhenAnyValue(s => s.ScrobblesCollection)
-            .Select(scrobbles => scrobbles.Count > 0);
+            .Select(scrobbles => scrobbles != null && scrobbles.Count > 0);
 
 
         DeleteAllCommand = ReactiveCommand.Create(DeleteAll, canExecuteDelete);
