@@ -19,8 +19,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         this.WhenActivated(disposable => { });
         AvaloniaXamlLoader.Load(this);
 
-
-        
+// #if DEBUG
+//         this.AttachDevTools();
+// #endif
+//         
 
         Interactions.GetFolderDialog.RegisterHandler(
             async interaction =>

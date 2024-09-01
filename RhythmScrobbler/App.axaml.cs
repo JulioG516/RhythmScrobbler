@@ -16,10 +16,7 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-
-        // Singleton
-        // Locator.CurrentMutable.RegisterConstant(new FileDialogService(), typeof(FileDialogService));
-
+        
         // Config from AppSettings.json
         var builder = new ConfigurationBuilder()
             .SetBasePath(System.AppContext.BaseDirectory)
