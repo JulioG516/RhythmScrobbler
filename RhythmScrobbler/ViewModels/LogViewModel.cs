@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
@@ -22,40 +23,50 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
 
 
     private ObservableCollection<RhythmScrobbleViewModel> _scrobblesCollection;
-    
+
     public ObservableCollection<RhythmScrobbleViewModel> ScrobblesCollection
     {
         get => _scrobblesCollection;
         set => this.RaiseAndSetIfChanged(ref _scrobblesCollection, value);
     }
 
-    
+
     // public ObservableCollection<RhythmScrobbleViewModel> ScrobblesCollection { get; set; }    
-    
+
     public LogViewModel()
     {
-        
     }
+
     public LogViewModel(IScreen screen)
     {
         HostScreen = screen;
         _dbService = Locator.Current.GetService<DbService>()!;
         _lastFmService = Locator.Current.GetService<LastFmService>()!;
-        
-        DeleteAllCommand = ReactiveCommand.Create(DeleteAll);
+
+        var canExecuteDelete = this.WhenAnyValue(s => s.ScrobblesCollection)
+            .Select(scrobbles => scrobbles.Count > 0);
+
+
+        DeleteAllCommand = ReactiveCommand.Create(DeleteAll, canExecuteDelete);
         ReloadCommand = ReactiveCommand.Create(Reload);
-        
-        var scrobbles = _dbService.GetScrobbles();
-        
-        ScrobblesCollection = new ObservableCollection<RhythmScrobbleViewModel>(
-            scrobbles.Select(s => new RhythmScrobbleViewModel(s))
-        );
-        
-        // Fetch additional info for scrobbles
-        FetchAdditionalInfoForNewScrobblesAsync(scrobbles).ConfigureAwait(false);
+
+
+        Load();
     }
 
     public ICommand ReloadCommand { get; }
+
+    private void Load()
+    {
+        var scrobbles = _dbService.GetScrobbles();
+
+        ScrobblesCollection = new ObservableCollection<RhythmScrobbleViewModel>(
+            scrobbles.Select(s => new RhythmScrobbleViewModel(s))
+        );
+
+        // Fetch additional info for scrobbles
+        FetchAdditionalInfoForNewScrobblesAsync(scrobbles).ConfigureAwait(false);
+    }
     
     private void Reload()
     {
@@ -70,7 +81,7 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
         // Fetch additional info for new scrobbles
         FetchAdditionalInfoForNewScrobblesAsync(newScrobbles).ConfigureAwait(false);
     }
-    
+
     private async Task FetchAdditionalInfoForNewScrobblesAsync(List<RhythmScrobble> newScrobbles)
     {
         var tasks = newScrobbles.Select(async scrobble =>
@@ -82,12 +93,12 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
 
         await Task.WhenAll(tasks);
     }
-    
+
     public ICommand DeleteAllCommand { get; }
+
     private void DeleteAll()
     {
-        _dbService.DeleteAllScrobbles();;
+        _dbService.DeleteAllScrobbles();
+        Load();
     }
-    
-    
 }

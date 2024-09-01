@@ -14,10 +14,10 @@ public class LastFmService
     private LastfmClient Client { get; set; }
     private DbService DbService { get; set; }
     
-    public string Username { get; set; }
+    public string Username { get; set; } 
     public string Password { get; set; }
 
-    public LastFmService()
+    public  LastFmService()
     {
         var lastFmConfig = Locator.Current.GetService<LastFmConfig>();
         Client = new LastfmClient(lastFmConfig!.ApiKey, lastFmConfig.SharedSecret);

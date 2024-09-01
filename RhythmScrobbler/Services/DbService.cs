@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using LiteDB;
 using RhythmScrobbler.Configs;
 using RhythmScrobbler.Helpers;
@@ -19,6 +20,13 @@ public class DbService
 
         _lazyDb = new Lazy<LiteDatabase>(() => new LiteDatabase(config!.DatabasePath));
         // EnsureIndexes();
+        // DeleteOldScrobblesHisttory();
+    }
+
+    private void DeleteOldScrobblesHisttory()
+    {
+        var col = Database.GetCollection<RhythmScrobble>("Scrobbles");
+        var x = col.DeleteMany(s => s.Date <= DateTime.Now.AddDays(-3));
     }
 
     private void EnsureIndexes()

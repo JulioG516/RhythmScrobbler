@@ -1,9 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Reactive;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using DynamicData.Binding;
 using ReactiveUI;
 
 namespace RhythmScrobbler.ViewModels;

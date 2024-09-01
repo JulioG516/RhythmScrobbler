@@ -11,9 +11,23 @@
     </Design.DataContext>
 
     <Grid RowDefinitions="50, *">
-        <StackPanel>
-            <TextBlock HorizontalAlignment="Center" Text="Scrobbles History." FontWeight="Bold" />
-            <Button VerticalAlignment="Center" HorizontalAlignment="Right"
+        <Grid Grid.Row="0" ColumnDefinitions="*, *, *">
+            <Button Grid.Column="0" Command="{Binding DeleteAllCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <PathIcon
+                        Data="{StaticResource DeleteRegular}"
+                        Margin="10,0, 10, 0">
+                    </PathIcon>
+                    <TextBlock VerticalAlignment="Center">
+                        Delete History
+                    </TextBlock>
+                </StackPanel>
+            </Button>
+            <StackPanel Grid.Column="1">
+                <TextBlock HorizontalAlignment="Center" Text="Scrobbles History." FontWeight="Bold" />
+                <TextBlock Text="(From the past 3 Days)" HorizontalAlignment="Center" Margin="0, 5, 0, 0" />
+            </StackPanel>
+            <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right"
                     Command="{Binding ReloadCommand}">
                 <StackPanel Orientation="Horizontal">
                     <PathIcon
@@ -26,7 +40,7 @@
                     </TextBlock>
                 </StackPanel>
             </Button>
-        </StackPanel>
+        </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ListBox ItemsSource="{Binding ScrobblesCollection}">

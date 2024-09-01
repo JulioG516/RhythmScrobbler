@@ -2,5 +2,5 @@
 
 public class LiteDbConfig
 {
-    public string DatabasePath { get; set; }
+    public string DatabasePath { get; set; } 
 }
