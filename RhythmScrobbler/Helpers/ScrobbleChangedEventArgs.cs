@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RhythmScrobbler.Models;
+namespace RhythmScrobbler.Helpers;
 
 public class ScrobbleChangedEventArgs : EventArgs
 {

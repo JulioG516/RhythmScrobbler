@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Services;
 using Splat;
 
@@ -21,12 +21,12 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
     private LastFmService _lastFmService;
 
 
-    private ObservableCollection<RhythmScrobbleViewModel> _ScrobblesCollection;
+    private ObservableCollection<RhythmScrobbleViewModel> _scrobblesCollection;
     
     public ObservableCollection<RhythmScrobbleViewModel> ScrobblesCollection
     {
-        get => _ScrobblesCollection;
-        set => this.RaiseAndSetIfChanged(ref _ScrobblesCollection, value);
+        get => _scrobblesCollection;
+        set => this.RaiseAndSetIfChanged(ref _scrobblesCollection, value);
     }
 
     
@@ -53,7 +53,6 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
         
         // Fetch additional info for scrobbles
         FetchAdditionalInfoForNewScrobblesAsync(scrobbles).ConfigureAwait(false);
-        // Reload();
     }
 
     public ICommand ReloadCommand { get; }
@@ -83,20 +82,8 @@ public class LogViewModel : ReactiveObject, IRoutableViewModel
 
         await Task.WhenAll(tasks);
     }
-    private async Task FetchAdditionalInfoForScrobblesAsync()
-    {
-        var tasks = ScrobblesCollection.Select(async scrobble =>
-        {
-            var trackInfo = await _lastFmService.FetchTrackInfoAsync(scrobble.Artist, scrobble.Track);
-            scrobble.ImageUrl = trackInfo.Album.Images.Find(x => x.Size.Equals("extralarge"))?.Url ?? string.Empty; // Assuming TrackInfo has an ImageUrl property
-        });
-
-        await Task.WhenAll(tasks);
-    }
-
     
     public ICommand DeleteAllCommand { get; }
-
     private void DeleteAll()
     {
         _dbService.DeleteAllScrobbles();;

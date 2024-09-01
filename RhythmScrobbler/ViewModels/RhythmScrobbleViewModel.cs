@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 
 namespace RhythmScrobbler.ViewModels;
 

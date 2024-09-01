@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reactive;
 using ReactiveUI;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Services;
 using Splat;
 

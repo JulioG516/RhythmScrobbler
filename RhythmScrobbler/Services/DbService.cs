@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using LiteDB;
 using RhythmScrobbler.Configs;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 using Splat;
 using Scrobble = Hqub.Lastfm.Entities.Scrobble;
 
@@ -25,6 +25,9 @@ public class DbService
     {
         var col = Database.GetCollection<RhythmScrobble>("Scrobbles");
         col.EnsureIndex(x => x.Artist);
+
+        var colGames = Database.GetCollection<Game>("Games");
+        colGames.EnsureIndex(x => x.Type);
     }
 
     public bool InsertScrobble(RhythmScrobble scrobble)
@@ -50,6 +53,42 @@ public class DbService
         col.DeleteAll();
     }
 
+    public UserConfig? RetrieveUserConfig()
+    {
+        var col = Database.GetCollection<UserConfig>("UserConfig");
+        return col.Query().FirstOrDefault();
+    }
+
+    public void SaveUserConfig(UserConfig userConfig)
+    {
+        var col = Database.GetCollection<UserConfig>("UserConfig");
+        col.DeleteAll();
+        col.Insert(userConfig);
+    }
+
+    public void DeleteUserConfig()
+    {
+        var col = Database.GetCollection<UserConfig>("UserConfig");
+        col.DeleteAll();
+    }
+
+    public void InsertGame(Game game)
+    {
+        var col = Database.GetCollection<Game>("Games");
+        var gameDb = col.Query().Where(g => g.Type == game.Type).FirstOrDefault();
+        if (gameDb != null)
+        {
+            col.DeleteMany(g => g.Type == game.Type);
+        }
+
+        col.Insert(game);
+    }
+
+    public List<Game> RetrieveGames()
+    {
+        var col = Database.GetCollection<Game>("Games");
+        return col.Query().ToList();
+    }
 
     public void Test()
     {

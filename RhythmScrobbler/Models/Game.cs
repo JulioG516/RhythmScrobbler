@@ -1,4 +1,4 @@
-﻿namespace RhythmScrobbler.Models;
+﻿namespace RhythmScrobbler.Helpers;
 
 public class Game
 {

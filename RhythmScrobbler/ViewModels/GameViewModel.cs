@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ReactiveUI;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Services;
 using Splat;
 
@@ -25,17 +24,27 @@ public class GameViewModel : ViewModelBase
         Type = game.Type;
 
         _lastFm = Locator.Current.GetService<LastFmService>()!;
+        _dbService = Locator.Current.GetService<DbService>()!;
 
         CurrentRhythmScrobble = new RhythmScrobble();
 
         // Observable on Path => changed != null or "" create new Service
         SelectPathCommand = ReactiveCommand.CreateFromTask(SelectPath);
-        
+
         // CreateFromTask
         ToggleWatcher = ReactiveCommand.Create(ToggleEnabled);
 
 
-        // TODO: Metodo para LAST.Fm
+        this.WhenAnyValue(x => x.Path)
+            .Where(x => !string.IsNullOrEmpty(x))
+            .Subscribe(path =>
+            {
+                _watcherService = new FileWatcherService(path, Type);
+
+                _watcherService.ScrobbleChanged += OnScrobbleChanged;
+            });
+
+
         this.WhenAnyValue(x => x.CurrentRhythmScrobble)
             .Where(x => !string.IsNullOrEmpty(x.Track)
                         && !string.IsNullOrEmpty(x.Album)
@@ -55,29 +64,30 @@ public class GameViewModel : ViewModelBase
 
     private LastFmService _lastFm;
     private FileWatcherService _watcherService;
+
+    private DbService _dbService;
+
     public ICommand SelectPathCommand { get; }
+
     private async Task SelectPath()
     {
         var folder = await Interactions.GetFolderDialog.Handle(Unit.Default);
-        
+
         if (!string.IsNullOrEmpty(folder))
         {
             Debug.WriteLine(folder);
             Path = folder;
+            _dbService.InsertGame(new Game { Name = Name, Path = Path, Type = Type });
+
             _watcherService = new FileWatcherService(Path, Type);
             // _watcherService.FileChanged += OnChanged;
             _watcherService.ScrobbleChanged += OnScrobbleChanged;
         }
     }
-    
-    
-    
+
+
     public ReactiveCommand<Unit, Unit> ToggleWatcher { get; }
 
-    private void OnChanged(object sender, FileSystemEventArgs e)
-    {
-        Debug.WriteLine("Recebi no VM.");
-    }
 
     private void OnScrobbleChanged(object? sender, ScrobbleChangedEventArgs e)
     {

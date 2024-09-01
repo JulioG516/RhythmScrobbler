@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 
 namespace RhythmScrobbler.Services;
 
@@ -10,14 +11,9 @@ public class FileWatcherService : IDisposable
 {
     private readonly FileSystemWatcher _watcher;
 
-    // private string _Scrobble;
-
-    // public event FileSystemEventHandler FileChanged;
+    private readonly EnumGameType _type;
     public event EventHandler<ScrobbleChangedEventArgs> ScrobbleChanged;
 
-    // private readonly MemoryCache _memCache;
-    // private readonly CacheItemPolicy _cacheItemPolicy;
-    // private const int CacheTimeMilliseconds = 1000;
 
     public FileWatcherService(string directoryPath, EnumGameType gameType)
     {
@@ -25,9 +21,10 @@ public class FileWatcherService : IDisposable
         var fileName = gameType switch
         {
             EnumGameType.CloneHero => Constants.CloneHeroFileName,
-            EnumGameType.YARG => "YARG.txt",
+            EnumGameType.YARG => Constants.YargFileName,
             _ => string.Empty
         };
+        _type = gameType;
 
 
         _watcher = new FileSystemWatcher
@@ -38,11 +35,6 @@ public class FileWatcherService : IDisposable
             EnableRaisingEvents = true
         };
 
-        // _memCache = MemoryCache.Default;
-        // _cacheItemPolicy = new CacheItemPolicy()
-        // {
-        //     RemovedCallback = OnRemovedFromCache
-        // };
 
         // Subscribe to events
         _watcher.Changed += OnChanged;
@@ -50,82 +42,62 @@ public class FileWatcherService : IDisposable
 
     private void OnChanged(object sender, FileSystemEventArgs e)
     {
-        // _cacheItemPolicy.AbsoluteExpiration =
-        //     DateTimeOffset.Now.AddMilliseconds(CacheTimeMilliseconds);
-        //
-        // // Only add if it is not there already (swallow others)
-        // _memCache.AddOrGetExisting(e.Name, e, _cacheItemPolicy);
-
         Debug.WriteLine(e);
         if (e.ChangeType != WatcherChangeTypes.Changed)
             return;
 
-        // Debug.WriteLine($"Changed: {e.FullPath}");
+        if (_type == EnumGameType.CloneHero)
+        {
+            Debug.WriteLine("Clone Hero");
+        }
+        else
+        {
+            Debug.WriteLine("YARG");
+        }
+
 
         Thread.SpinWait(15);
 
-        var x = File.ReadAllLines(e.FullPath);
-        if (x.Length > 0)
+
+        if (_type == EnumGameType.CloneHero)
         {
-            // Debug.WriteLine("Mudancas: ");
-            // foreach (var se in x)
-            // {
-            //     Debug.WriteLine(se);
-            // }
-
-            
-            ScrobbleChanged?.Invoke(sender,
-                new ScrobbleChangedEventArgs()
+            var x = File.ReadAllLines(e.FullPath);
+            if (x.Length > 0)
+            {
+                var rhythmScrobble = new RhythmScrobble()
                 {
-                    RhythmScrobble = new RhythmScrobble()
-                    {
-                        Track = x[0],
-                        Artist = x[1],
-                        Album = x[2]
-                    }
-                });
-        }
+                    Track = x[0],
+                    Artist = x[1],
+                    Album = x[2]
+                };
 
-        // this.FileChanged?.Invoke(sender, e);
+                ScrobbleChanged?.Invoke(this,
+                    new ScrobbleChangedEventArgs { RhythmScrobble = rhythmScrobble });
+            }
+        }
+        else if (_type == EnumGameType.YARG)
+        {
+            var jsonString = File.ReadAllText(e.FullPath);
+            if (string.IsNullOrEmpty(jsonString))
+                return;
+
+            var songInfo = JsonSerializer.Deserialize<YargSongInfo>(jsonString);
+
+            if (songInfo != null)
+            {
+                var rhythmScrobble = new RhythmScrobble
+                {
+                    Track = songInfo.Name,
+                    Artist = songInfo.Artist,
+                    Album = songInfo.Album
+                };
+
+                ScrobbleChanged?.Invoke(this,
+                    new ScrobbleChangedEventArgs { RhythmScrobble = rhythmScrobble });
+            }
+        }
     }
 
-    // // Handle cache item expiring
-    // private void OnRemovedFromCache(CacheEntryRemovedArguments args)
-    // {
-    //     if (args.RemovedReason != CacheEntryRemovedReason.Expired) return;
-    //
-    //     // Now actually handle file event
-    //     var e = (FileSystemEventArgs)args.CacheItem.Value;
-    //
-    //     if (e.ChangeType != WatcherChangeTypes.Changed)
-    //         return;
-    //
-    //
-    //     Debug.WriteLine($"Changed: {e.FullPath}");
-    //
-    //     Thread.SpinWait(10);
-    //
-    //     var x = File.ReadAllLines(e.FullPath);
-    //     if (x.Length > 0)
-    //     {
-    //         // Debug.WriteLine("Mudancas: ");
-    //         // foreach (var se in x)
-    //         // {
-    //         //     Debug.WriteLine(se);
-    //         // }
-    //
-    //         this.ScrobbleChanged?.Invoke(this,
-    //             new ScrobbleChangedEventArgs()
-    //             {
-    //                 Scrobble = new Scrobble()
-    //                 {
-    //                     SongName = x[0],
-    //                     Artist = x[1],
-    //                     Album = x[2]
-    //                 }
-    //             });
-    //     }
-    // }
 
     public void Dispose()
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Hqub.Lastfm.Entities;
 
-namespace RhythmScrobbler.Models;
+namespace RhythmScrobbler.Helpers;
 
 public class RhythmScrobble
 {

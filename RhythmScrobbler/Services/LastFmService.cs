@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Hqub.Lastfm;
 using Hqub.Lastfm.Entities;
 using RhythmScrobbler.Configs;
-using RhythmScrobbler.Models;
+using RhythmScrobbler.Helpers;
 using Splat;
 
 namespace RhythmScrobbler.Services;
