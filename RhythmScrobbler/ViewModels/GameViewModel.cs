@@ -4,6 +4,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using ReactiveUI;
 using RhythmScrobbler.Helpers;
 using RhythmScrobbler.Services;
@@ -54,7 +56,43 @@ public class GameViewModel : ViewModelBase
             .Distinct()
             .Throttle(TimeSpan.FromSeconds(5))
             .Subscribe(OnNextSong);
+
+        UpdateCover();
     }
+
+
+    private Bitmap? _cover;
+
+    public Bitmap? Cover
+    {
+        get => _cover;
+        set => this.RaiseAndSetIfChanged(ref _cover, value);
+    }
+
+    private void UpdateCover()
+    {
+        try
+        {
+            string assetPath = Type switch
+            {
+                EnumGameType.CloneHero => Constants.CloneHeroLogo,
+                EnumGameType.YARG => Constants.YargLogo,
+                _ => ""
+            };
+
+            if (string.IsNullOrEmpty(assetPath))
+                return;
+
+            var bitmap = new Bitmap(AssetLoader.Open(new Uri(assetPath)));
+
+            Cover = bitmap;
+        }
+        catch (Exception)
+        {
+            Cover = null;
+        }
+    }
+
 
     private async void OnNextSong(RhythmScrobble newValue)
     {
@@ -142,11 +180,5 @@ public class GameViewModel : ViewModelBase
     {
         get => _currentRhythmScrobble;
         set => this.RaiseAndSetIfChanged(ref _currentRhythmScrobble, value);
-        // {
-        //     if (_currentScrobble != value)
-        //     {
-        //         this.RaiseAndSetIfChanged(ref _currentScrobble, value);
-        //     }
-        // }
     }
 }

@@ -13,21 +13,24 @@
     <StackPanel Width="200">
         <Border CornerRadius="10" ClipToBounds="True">
             <Panel Background="#7FFF22DD">
-                <!-- <Image Width="200" Stretch="Uniform" Source="{Binding Cover}" /> -->
-                <!-- IsVisible="{Binding Cover, Converter={x:Static ObjectConverters.IsNull}}" -->
+                <Image Width="200" Stretch="Uniform" Source="{Binding Cover}" />
                 <Panel Height="200">
-                    <PathIcon Height="75" Width="75" Data="{StaticResource GamesRegular}"></PathIcon>
+                    <PathIcon
+                        IsVisible="{Binding Cover, 
+                Converter={x:Static ObjectConverters.IsNull}}"
+                        Height="75" Width="75" Data="{StaticResource GamesRegular}">
+                    </PathIcon>
                 </Panel>
                 <Button VerticalAlignment="Bottom"
-                        HorizontalAlignment="Left" 
+                        HorizontalAlignment="Left"
                         CornerRadius="10"
                         Command="{Binding ToggleWatcher}"
+                        ToolTip.Tip="Enable the Scrobble Watcher to automatically track and scrobble your songs with RhythmScrobbler."
                         Classes.btn="{Binding IsWatcherToggled}">
                     <PathIcon Height="25"
-                              Width="25" 
+                              Width="25"
                               Data="{StaticResource PowerRegular}"
-                              Classes.toggled="{Binding IsWatcherToggled}"
-                    >
+                              Classes.toggled="{Binding IsWatcherToggled}">
                         <PathIcon.Styles>
                             <Style Selector="PathIcon">
                                 <Setter Property="Foreground" Value="Red"></Setter>
@@ -35,13 +38,14 @@
                             <Style Selector="PathIcon.toggled">
                                 <Setter Property="Foreground" Value="LimeGreen"></Setter>
                             </Style>
-                            
+
                         </PathIcon.Styles>
                     </PathIcon>
                 </Button>
                 <Button VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
                         CornerRadius="10"
+                        ToolTip.Tip="Select the folder where your game's current song file is located."
                         Command="{Binding SelectPathCommand}">
                     <PathIcon Height="25" Width="25" Data="{StaticResource FolderLinkRegular}"></PathIcon>
                 </Button>

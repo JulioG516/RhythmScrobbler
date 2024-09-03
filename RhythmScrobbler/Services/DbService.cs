@@ -20,7 +20,7 @@ public class DbService
 
         _lazyDb = new Lazy<LiteDatabase>(() => new LiteDatabase(config!.DatabasePath));
         // EnsureIndexes();
-        // DeleteOldScrobblesHisttory();
+        DeleteOldScrobblesHisttory();
     }
 
     private void DeleteOldScrobblesHisttory()

@@ -24,7 +24,7 @@
                 </StackPanel>
             </Button>
             <StackPanel Grid.Column="1">
-                <TextBlock HorizontalAlignment="Center" Text="Scrobbles History." FontWeight="Bold" />
+                <TextBlock HorizontalAlignment="Center" Text="Scrobbles History" FontWeight="Bold" />
                 <TextBlock Text="(From the past 3 Days)" HorizontalAlignment="Center" Margin="0, 5, 0, 0" />
             </StackPanel>
             <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right"
