@@ -22,7 +22,7 @@ RhythmScrobbler is an application that allows you to connect your Last.fm accoun
 
 1. **Configure Last.fm**:
     - Either if you are building or using a release version, you need to configure it with your Last.FM API settings.
-    - Create a `appsettings.json` file in the root directory.
+    - Edit the `appsettings.json` file in the root directory.
     - Add your Last.fm API key and secret:
         ```json
         {
